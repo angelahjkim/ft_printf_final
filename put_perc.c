@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   put_cp.c                                           :+:      :+:    :+:   */
+/*   put_perc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/25 15:26:00 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/06 12:37:46 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 13:28:02 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,84 +45,33 @@ void	put_char(char **format, t_format *f, va_list args)
 	reset_struct(f);
 }
 
-void	put_address(char **format, t_format *f, va_list args)
+void	check_percent(char **format, t_format *f)
 {
-	long	add_arg;
-
-	add_arg = va_arg(args, long);
-	if (add_arg == 0 && ((PREC >= 0 || WIDTH > 0) || (PREC == -1 && WIDTH == -1)))
+	if (**format == '%')
 	{
-		put_add_zero(format, f, &add_arg);
-		return ;
+		f->arg_len = 1;
+		if (f->flags & F_MINUS && !(WIDTH == -1 && PREC == -1))
+		{
+			ft_putchar('%');
+			COUNT++;
+			put_padding(f);
+			f->flags -= F_MINUS;
+		}
+		else if (!(WIDTH == -1 && PREC == -1))
+		{
+			put_padding(f);
+			ft_putchar('%');
+			COUNT++;;
+		}
+		if (WIDTH == -1 && PREC == -1)
+		{
+			ft_putchar('%');
+			COUNT++;
+		}
+		f->arg_num = 10;
+		(*format)++;
+		reset_struct(f);
 	}
-	ft_hexlen(add_arg, &LEN);
-	LEN += 2;
-	if (WIDTH < LEN && PREC < LEN)
-	{
-		ft_putstr("0x");
-		if (add_arg == 0 && PREC <= 0)
-			(!f->p) ? ft_puthex_long(add_arg) : COUNT-- ;
-		ft_puthex_long(add_arg);
-		COUNT += LEN;
-	}
-	else if (WIDTH > LEN || PREC > LEN)
-	{
-		if (!(FLAGS & F_MINUS))
-			put_pad_add(f, &add_arg);
-		else if (FLAGS & F_MINUS)
-			put_pad_add_minus(f, &add_arg);
-	}
-	(*format)++;
-	reset_struct(f);
-}
-
-void	put_add_zero(char **format, t_format *f, long *add_arg)
-{
-	LEN = (WIDTH > 0) ? 3 : 1;
-	if (f->p && PREC == 0)
-		LEN = 0;
-	if (!(FLAGS & F_MINUS))
-		put_pad_add(f, add_arg);
-	else if (FLAGS & F_MINUS)
-		put_pad_add_minus(f, add_arg);
-	(*format)++;
-	reset_struct(f);
-}
-
-void	put_pad_add(t_format *f, long *add_arg)
-{
-	P_ZERO = PREC - LEN;
-	P_ZERO += (PREC > LEN && *add_arg != 0) ? 2 : 0;
-	P_SPACE = (WIDTH -= (PREC > LEN) ? PREC : LEN);
-// printf("ZERO: %d\tSPACE: %d\n", P_ZERO, P_SPACE);
-	while (P_SPACE-- && P_SPACE >= 0)
-	{
-		write(1, " ", 1);
-		COUNT++;
-	}
-	ft_putstr("0x");
-	COUNT += 2;
-	while (P_ZERO-- && P_ZERO >=0)
-	{
-		write(1, "0", 1);
-		COUNT++;
-	}
-	if (f->p && PREC == 0 && WIDTH == -1)
-		return ;
-	ft_puthex_long(*add_arg);
-	COUNT += LEN;
-	COUNT -= (*add_arg != 0 || WIDTH > 0) ? 2 : 0;
-}
-
-void	put_pad_add_minus(t_format *f, long *add_arg)
-{
-	P_SPACE = (WIDTH -= (PREC > LEN) ? PREC : LEN);
-	ft_putstr("0x");
-	ft_puthex_long(*add_arg);
-	COUNT += LEN;
-	while (P_SPACE--)
-	{
-		write(1, " ", 1);
-		COUNT++;
-	}
+	else
+		f->arg_num = -1;
 }
