@@ -6,7 +6,7 @@
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/02 10:35:12 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/03 17:22:15 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 14:07:56 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,33 +41,36 @@ void	put_prefix_ox_xx(t_format *f)
 void	put_ox_zero(t_format *f)
 {
 	if (FLAGS & F_HASH)
-	{
-		if (f->spec == 'x' || f->spec == 'X')
-		{
-			if (f->p && (PREC == 0 || PREC == 1) && WIDTH > 0)
-				write(1, " ", 1);
-			else if (PREC == -1 && WIDTH == -1)
-				return ;
-		}
-		else if (f->spec == 'o')
-		{
-			if (f->p && (PREC == 0 || PREC == 1))
-			{
-				write(1, "0", 1);
-				COUNT++;
-			}
-			else if (PREC == -1 && WIDTH == -1)
-			{
-				write(1, "0", 1);
-				COUNT++;
-			}
-		}
-	}
+		put_ox_zero_hash(f);
 	else if (f->w_val == -1 && !(f->p))
 		write(1, "0", 1);
 	else if (f->p && f->p_val != -1)
 		return ;
 	f->hash_flag = 1;
+}
+
+void	put_ox_zero_hash(t_format *f)
+{
+	if (f->spec == 'x' || f->spec == 'X')
+	{
+		if (f->p && (PREC == 0 || PREC == 1) && WIDTH > 0)
+			write(1, " ", 1);
+		else if (PREC == -1 && WIDTH == -1)
+			return ;
+	}
+	else if (f->spec == 'o')
+	{
+		if (f->p && (PREC == 0 || PREC == 1))
+		{
+			write(1, "0", 1);
+			COUNT++;
+		}
+		else if (PREC == -1 && WIDTH == -1)
+		{
+			write(1, "0", 1);
+			COUNT++;
+		}
+	}
 }
 
 void	put_ox_value(t_format *f)

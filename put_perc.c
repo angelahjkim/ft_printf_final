@@ -6,7 +6,7 @@
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/25 15:26:00 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/06 13:28:02 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 14:06:13 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	put_ordinary(char **format, t_format *f)
 {
 	ft_putchar(**format);
-	COUNT++;
+	f->count++;
 	(*format)++;
 }
 
@@ -57,20 +57,16 @@ void	check_percent(char **format, t_format *f)
 			put_padding(f);
 			f->flags -= F_MINUS;
 		}
-		else if (!(WIDTH == -1 && PREC == -1))
+		else
 		{
-			put_padding(f);
-			ft_putchar('%');
-			COUNT++;;
-		}
-		if (WIDTH == -1 && PREC == -1)
-		{
+			if (!(WIDTH == -1 && PREC == -1))
+				put_padding(f);
 			ft_putchar('%');
 			COUNT++;
 		}
-		f->arg_num = 10;
 		(*format)++;
 		reset_struct(f);
+		f->arg_num = 10;
 	}
 	else
 		f->arg_num = -1;

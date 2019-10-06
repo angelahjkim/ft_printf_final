@@ -6,7 +6,7 @@
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/02 10:33:52 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/03 17:49:41 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 16:05:08 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ void			put_int_value (t_format *f);
 void			put_unsigned(char **format, t_format *f, va_list args);
 void			put_hex(char **format, t_format *f, va_list args);
 void			put_ox_zero(t_format *f);
+void			put_ox_zero_hash(t_format *f);
 void			put_hex_flags(t_format *f);
 void			put_octal(char **format, t_format *f, va_list args);
 void			put_octal_flags(t_format *f);
@@ -116,9 +117,10 @@ void			put_prefix_ox_xx(t_format *f);
 void			put_ox_value(t_format *f);
 void			put_padding(t_format *f);
 void			put_float(char **format, t_format *f, va_list args);
+void			put_float_two(char **format, t_format *f, char **f_str, int n);
 int				ft_atoi(const char *str);
 char			*ft_ltoa(long nbr);
-char			*ft_llutoa(uint64_t nbr);
+char			*ft_llutoa(uint64_t nbr, int size, int len);
 void			*ft_memalloc(size_t size);
 void			ft_bzero(void *s, size_t n);
 int				ft_isdigit(int c);

@@ -6,7 +6,7 @@
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/27 12:18:32 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/03 15:23:06 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 16:05:17 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,29 +28,13 @@ int		get_mod_arg_f(t_format *f, va_list args, long double *n, char **s)
 		neg = 1;
 		COUNT++;
 	}
-	whole = ((uint64_t)*n);
+	whole = (*n == (double)2147483647) ? 2147483647 : ((uint64_t)*n);
 	*n = *n - ((uint64_t)*n);
 	if (!f->p)
 		PREC = 6;
 	LEN = ft_digitcount(whole) + 1 + PREC;
-	*s = ft_memalloc(sizeof(char) * LEN + 1);
-	*s = ft_llutoa(whole);
+	*s = ft_llutoa(whole, ft_digitcount(whole), LEN);
 	return (neg ? 1 : 0);
-}
-
-void	put_float_pad(t_format *f, char **f_str, long double *f_arg, int *i)
-{
-	long double	cast;
-
-	cast = 0;
-	while (PREC-- > 0)
-	{
-		*f_arg *= 10;
-		cast = (*f_arg > 0) ? 0.5 : -0.5;
-		*f_str[(*i)++] = ((uint64_t)(*f_arg + cast) % 10) + 48;
-		*f_arg = *f_arg - (uint64_t)*f_arg;
-	}
-	*(f_str)[*i] = '\0';
 }
 
 void	put_float(char **format, t_format *f, va_list args)
@@ -71,13 +55,23 @@ void	put_float(char **format, t_format *f, va_list args)
 		COUNT++;
 	}
 	i += ft_digitcount(ft_atoi(f_str));
-	if ((f->p && !(PREC == -1 || PREC == 0)) || (!f->p))
-		f_str[i++] = '.';
-	put_float_pad(f, &f_str, &f_arg, &i);
-	(neg) ? ft_putchar('-') : 0;
-	ft_putstr(f_str);
-	COUNT += ft_strlen(f_str);
-	free(f_str);
+	((f->p && !(PREC == -1 || PREC == 0)) || (!f->p)) ? f_str[i++] = '.' : 0;
+	while (PREC-- && i < LEN)
+	{
+		f_arg *= 10;
+		f_str[i++] = (uint64_t)f_arg % 10 + 48;
+		f_arg = (long double)f_arg - (uint64_t)f_arg;
+	}
+	f_str[i] = '\0';
+	put_float_two(format, f, &f_str, neg);
+}
+
+void	put_float_two(char **format, t_format *f, char **f_str, int n)
+{
+	(n) ? ft_putchar('-') : 0;
+	ft_putstr(*f_str);
+	COUNT += ft_strlen(*f_str);
+	free(*f_str);
 	(*format)++;
 	reset_struct(f);
 }

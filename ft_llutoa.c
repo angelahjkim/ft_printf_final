@@ -6,22 +6,20 @@
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/01 14:40:20 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/02 10:20:56 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 15:43:03 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-char	*ft_llutoa(uint64_t nbr)
+char	*ft_llutoa(uint64_t nbr, int size, int len)
 {
 	char	*num_str;
-	int		size;
 
 	num_str = NULL;
-	size = ft_digitcount(nbr);
-	if ((num_str = (char *)ft_memalloc(sizeof(char) * (size + 1))) == NULL)
+	if ((num_str = (char *)ft_memalloc(sizeof(char) * (len + 1))) == NULL)
 		return (num_str);
-	num_str[size] = '\0';
+	num_str[len] = '\0';
 	if (nbr == 0)
 	{
 		num_str[0] = '0';

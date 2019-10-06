@@ -6,7 +6,7 @@
 /*   By: angkim <angkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/25 15:26:00 by angkim            #+#    #+#             */
-/*   Updated: 2019/10/06 12:50:26 by angkim           ###   ########.fr       */
+/*   Updated: 2019/10/06 13:46:33 by angkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,54 +14,55 @@
 
 void	put_address(char **format, t_format *f, va_list args)
 {
-	long	add_arg;
+	long	p;
 
-	add_arg = va_arg(args, long);
-	if (add_arg == 0 && ((PREC >= 0 || WIDTH > 0) || (PREC == -1 && WIDTH == -1)))
-	{
-		put_add_zero(format, f, &add_arg);
+	p = va_arg(args, long);
+	put_add_zero(format, f, &p);
+	if (p == 0 && ((PREC >= 0 || WIDTH > 0) || (PREC == -1 && WIDTH == -1)))
 		return ;
-	}
-	ft_hexlen(add_arg, &LEN);
+	ft_hexlen(p, &LEN);
 	LEN += 2;
 	if (WIDTH < LEN && PREC < LEN)
 	{
 		ft_putstr("0x");
-		if (add_arg == 0 && PREC <= 0)
-			(!f->p) ? ft_puthex_long(add_arg) : COUNT-- ;
-		ft_puthex_long(add_arg);
+		if (p == 0 && PREC <= 0)
+			(!f->p) ? ft_puthex_long(p) : COUNT--;
+		ft_puthex_long(p);
 		COUNT += LEN;
 	}
 	else if (WIDTH > LEN || PREC > LEN)
 	{
 		if (!(FLAGS & F_MINUS))
-			put_pad_add(f, &add_arg);
+			put_pad_add(f, &p);
 		else if (FLAGS & F_MINUS)
-			put_pad_add_minus(f, &add_arg);
+			put_pad_add_minus(f, &p);
 	}
 	(*format)++;
 	reset_struct(f);
 }
 
-void	put_add_zero(char **format, t_format *f, long *add_arg)
+void	put_add_zero(char **format, t_format *f, long *p)
 {
-	LEN = (WIDTH > 0) ? 3 : 1;
-	if (f->p && PREC == 0)
-		LEN = 0;
-	if (!(FLAGS & F_MINUS))
-		put_pad_add(f, add_arg);
-	else if (FLAGS & F_MINUS)
-		put_pad_add_minus(f, add_arg);
-	(*format)++;
-	reset_struct(f);
+	if (*p == 0 && ((PREC >= 0 || WIDTH > 0)
+		|| (PREC == -1 && WIDTH == -1)))
+	{
+		LEN = (WIDTH > 0) ? 3 : 1;
+		if (f->p && PREC == 0)
+			LEN = 0;
+		if (!(FLAGS & F_MINUS))
+			put_pad_add(f, p);
+		else if (FLAGS & F_MINUS)
+			put_pad_add_minus(f, p);
+		(*format)++;
+		reset_struct(f);
+	}
 }
 
-void	put_pad_add(t_format *f, long *add_arg)
+void	put_pad_add(t_format *f, long *p)
 {
 	P_ZERO = PREC - LEN;
-	P_ZERO += (PREC > LEN && *add_arg != 0) ? 2 : 0;
+	P_ZERO += (PREC > LEN && *p != 0) ? 2 : 0;
 	P_SPACE = (WIDTH -= (PREC > LEN) ? PREC : LEN);
-// printf("ZERO: %d\tSPACE: %d\n", P_ZERO, P_SPACE);
 	while (P_SPACE-- && P_SPACE >= 0)
 	{
 		write(1, " ", 1);
@@ -69,23 +70,23 @@ void	put_pad_add(t_format *f, long *add_arg)
 	}
 	ft_putstr("0x");
 	COUNT += 2;
-	while (P_ZERO-- && P_ZERO >=0)
+	while (P_ZERO-- && P_ZERO >= 0)
 	{
 		write(1, "0", 1);
 		COUNT++;
 	}
 	if (f->p && PREC == 0 && WIDTH == -1)
 		return ;
-	ft_puthex_long(*add_arg);
+	ft_puthex_long(*p);
 	COUNT += LEN;
-	COUNT -= (*add_arg != 0 || WIDTH > 0) ? 2 : 0;
+	COUNT -= (*p != 0 || WIDTH > 0) ? 2 : 0;
 }
 
-void	put_pad_add_minus(t_format *f, long *add_arg)
+void	put_pad_add_minus(t_format *f, long *p)
 {
 	P_SPACE = (WIDTH -= (PREC > LEN) ? PREC : LEN);
 	ft_putstr("0x");
-	ft_puthex_long(*add_arg);
+	ft_puthex_long(*p);
 	COUNT += LEN;
 	while (P_SPACE--)
 	{
